@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Expense Tracker Agent</title>
+  <link rel="stylesheet" href="tokens.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans);
+           font-size: var(--text-base); line-height: var(--leading-normal); -webkit-font-smoothing: antialiased; }
+    button, input { font: inherit; color: inherit; }
+    .page { max-width: 760px; margin: 0 auto; padding: var(--space-8) var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); height: 100vh; }
+    h1 { margin: 0; font-size: var(--text-xl); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-tight); }
+    .muted { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); }
+    .row { display: flex; align-items: center; gap: var(--space-2); }
+    .spread { justify-content: space-between; }
+    input { height: 36px; padding: 0 var(--space-3); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-surface); }
+    input:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+    .btn { height: 36px; padding: 0 var(--space-4); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-surface); cursor: pointer; font-weight: var(--weight-medium); }
+    .btn:hover { background: var(--color-surface-hover); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn.primary { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+    .btn.primary:hover { background: var(--color-primary-hover); }
+    #chat { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+    #messages { flex: 1; overflow-y: auto; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+    .msg { max-width: 85%; padding: var(--space-2) var(--space-4); border-radius: var(--radius-lg); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .msg.user { align-self: flex-end; background: var(--color-primary); color: var(--color-on-primary); }
+    .msg.bot { align-self: flex-start; background: var(--color-surface-sunken); border: 1px solid var(--color-border); }
+    .msg.error { align-self: flex-start; color: var(--color-negative); background: var(--color-negative-soft); }
+    form { display: flex; gap: var(--space-2); padding: var(--space-3); border-top: 1px solid var(--color-border); }
+    form input { flex: 1; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Expense Tracker Agent</h1>
+
+    <!-- 1. pick a user (no auth) -->
+    <div class="card" id="user-box">
+      <div class="row spread" id="user-set">
+        <label class="muted" for="user-id">User ID</label>
+        <div class="row">
+          <input id="user-id" type="number" min="1" placeholder="e.g. 1" />
+          <button class="btn primary" id="start">Start chat</button>
+        </div>
+      </div>
+      <div class="row spread hidden" id="user-active">
+        <div>
+          <div id="user-label"></div>
+          <div class="muted" id="session-label"></div>
+        </div>
+        <div class="row">
+          <button class="btn" id="new-session">New session</button>
+          <button class="btn" id="switch">Change user</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. chat -->
+    <div class="card hidden" id="chat">
+      <div id="messages"></div>
+      <form id="form">
+        <input id="text" autocomplete="off" placeholder="e.g. I paid 250 for lunch at Starbucks" />
+        <button class="btn primary" id="send">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let userId = null, sessionId = null;
+
+    function newSession() {
+      sessionId = crypto.randomUUID();
+      $("session-label").textContent = "Session " + sessionId.slice(0, 8);
+      $("messages").innerHTML = "";
+    }
+
+    function add(kind, text) {
+      const div = document.createElement("div");
+      div.className = "msg " + kind;
+      div.textContent = text;  // textContent: reply is shown as plain text, never as HTML
+      $("messages").appendChild(div);
+      $("messages").scrollTop = $("messages").scrollHeight;
+      return div;
+    }
+
+    function setUser(id) {
+      userId = id;
+      $("user-label").textContent = id ? "User " + id : "";
+      $("user-set").classList.toggle("hidden", !!id);
+      $("user-active").classList.toggle("hidden", !id);
+      $("chat").classList.toggle("hidden", !id);
+      if (id) { newSession(); $("text").focus(); }
+    }
+
+    $("start").onclick = () => {
+      const id = parseInt($("user-id").value, 10);
+      if (id > 0) setUser(id);
+    };
+    $("user-id").onkeydown = (e) => { if (e.key === "Enter") $("start").click(); };
+    $("switch").onclick = () => setUser(null);
+    $("new-session").onclick = newSession;
+
+    $("form").onsubmit = async (e) => {
+      e.preventDefault();
+      const message = $("text").value.trim();
+      if (!message) return;
+      $("text").value = "";
+      add("user", message);
+      $("send").disabled = true;
+      const pending = add("bot", "...");
+      try {
+        const resp = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId, user_id: userId, message }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.detail || "Request failed");
+        pending.textContent = data.reply;
+      } catch (err) {
+        pending.className = "msg error";
+        pending.textContent = err.message;
+      }
+      $("send").disabled = false;
+      $("text").focus();
+      $("messages").scrollTop = $("messages").scrollHeight;
+    };
+  </script>
+</body>
+</html>

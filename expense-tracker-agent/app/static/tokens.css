@@ -1,0 +1,251 @@
+/* ==========================================================================
+   Design tokens
+   Language: quiet, typographic, near-monochrome. Ink does the work; ONE accent colour is
+   used sparingly (links, focus, the primary chart series). Colour otherwise appears only
+   to carry meaning (positive / warning / negative).
+   Layers:
+     1. Primitives  - raw palette & scales (never used directly in components)
+     2. Semantic    - meaning-based tokens components use; these swap for dark mode
+   ========================================================================== */
+
+:root {
+  /* ---------- 1. Primitives ---------- */
+  --gray-0: #ffffff;
+  --gray-25: #fbfbfa;
+  --gray-50: #f6f6f4;
+  --gray-100: #eeeeeb;
+  --gray-150: #e7e7e3;
+  --gray-200: #dcdcd7;
+  --gray-300: #c4c4be;
+  --gray-400: #9b9b95;
+  --gray-500: #72726c;
+  --gray-600: #55554f;
+  --gray-700: #3a3a36;
+  --gray-800: #232321;
+  --gray-900: #141413;
+
+  --cobalt-500: #2f5bea;
+  --cobalt-600: #2449c8;
+  --cobalt-50: #eef2fe;
+
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --text-xs: 11.5px;
+  --text-sm: 12.5px;
+  --text-base: 13.5px;
+  --text-md: 15px;
+  --text-lg: 17px;
+  --text-xl: 20px;
+  --text-2xl: 26px;
+  --text-3xl: 32px;
+  --text-4xl: 56px;
+  --text-5xl: 96px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --tracking-tight: -0.02em;
+  --tracking-display: -0.035em;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-1: 120ms;
+  --dur-2: 180ms;
+  --dur-3: 280ms;
+
+  --sidebar-width: 232px;
+  --topbar-height: 60px;
+  --content-max: 1360px;
+
+  --z-sidebar: 20;
+  --z-topbar: 15;
+  --z-overlay: 50;
+  --z-toast: 70;
+  --z-deck: 60;
+
+  /* ---------- 2. Semantic tokens: LIGHT (default) ---------- */
+  color-scheme: light;
+
+  --color-bg: var(--gray-25);
+  --color-surface: var(--gray-0);
+  --color-surface-sunken: var(--gray-50);
+  --color-surface-hover: var(--gray-50);
+  --color-border: #ecece8;
+  --color-border-strong: var(--gray-200);
+
+  --color-text: var(--gray-900);
+  --color-text-muted: var(--gray-500);
+  --color-text-subtle: var(--gray-400);
+
+  --color-primary: var(--gray-900);
+  --color-primary-hover: var(--gray-700);
+  --color-on-primary: #ffffff;
+  --color-accent: var(--cobalt-500);
+  --color-accent-soft: var(--cobalt-50);
+
+  --color-positive: #2c7a58;
+  --color-positive-soft: rgba(44, 122, 88, 0.1);
+  --color-negative: #c0443b;
+  --color-negative-soft: rgba(192, 68, 59, 0.1);
+  --color-warning: #a8741a;
+  --color-warning-soft: rgba(168, 116, 26, 0.12);
+
+  --color-focus-ring: rgba(20, 20, 19, 0.12);
+  --color-overlay: rgba(20, 20, 19, 0.38);
+  --color-tooltip-bg: var(--gray-900);
+  --color-tooltip-text: #ffffff;
+
+  --shadow-sm: none;
+  --shadow-md: 0 8px 24px rgba(20, 20, 19, 0.08);
+  --shadow-lg: 0 24px 64px rgba(20, 20, 19, 0.16);
+
+  /* Charts: ink + accent first, then a muted categorical set for the rare multi-series chart. */
+  --chart-ink: var(--gray-900);
+  --chart-accent: var(--cobalt-500);
+  --chart-muted: #d9d9d4;
+  --chart-1: #2f5bea;
+  --chart-2: #2a2a28;
+  --chart-3: #4e9a94;
+  --chart-4: #d2a24c;
+  --chart-5: #c8705a;
+  --chart-6: #8aa37a;
+  --chart-7: #8f7bb0;
+  --chart-8: #6f86b3;
+  --chart-9: #c98a9b;
+  --chart-10: #a8a39b;
+  --chart-neutral: #c9c9c3;
+  --chart-grid: rgba(20, 20, 19, 0.07);
+  --chart-label: #8a8a84;
+}
+
+/* ---------- 2. Semantic tokens: DARK ----------
+   Applied when the OS prefers dark (unless the user forced light) ... */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --color-bg: #0a0a0b;
+      --color-surface: #111113;
+      --color-surface-sunken: #0d0d0f;
+      --color-surface-hover: #17171a;
+      --color-border: #202024;
+      --color-border-strong: #2d2d33;
+
+      --color-text: #ededef;
+      --color-text-muted: #9a9aa3;
+      --color-text-subtle: #6b6b74;
+
+      --color-primary: #ededef;
+      --color-primary-hover: #ffffff;
+      --color-on-primary: #0a0a0b;
+      --color-accent: #6d8dff;
+      --color-accent-soft: rgba(109, 141, 255, 0.14);
+
+      --color-positive: #5fbf94;
+      --color-positive-soft: rgba(95, 191, 148, 0.14);
+      --color-negative: #ee7b72;
+      --color-negative-soft: rgba(238, 123, 114, 0.14);
+      --color-warning: #dfae5a;
+      --color-warning-soft: rgba(223, 174, 90, 0.14);
+
+      --color-focus-ring: rgba(237, 237, 239, 0.18);
+      --color-overlay: rgba(0, 0, 0, 0.62);
+      --color-tooltip-bg: #ededef;
+      --color-tooltip-text: #0a0a0b;
+
+      --shadow-sm: none;
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.65);
+
+      --chart-ink: #ededef;
+      --chart-accent: #6d8dff;
+      --chart-muted: #3a3a41;
+      --chart-1: #6d8dff;
+      --chart-2: #d4d4d0;
+      --chart-3: #6cb5ae;
+      --chart-4: #e0b661;
+      --chart-5: #de8b73;
+      --chart-6: #a3bd92;
+      --chart-7: #a692c4;
+      --chart-8: #8ca2cc;
+      --chart-9: #dda1b0;
+      --chart-10: #8b867e;
+      --chart-neutral: #4a4a52;
+      --chart-grid: rgba(237, 237, 239, 0.07);
+      --chart-label: #8b8b94;
+  }
+}
+
+/* ... or when the user picked dark with the theme toggle (data-theme="dark"). */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-bg: #0a0a0b;
+    --color-surface: #111113;
+    --color-surface-sunken: #0d0d0f;
+    --color-surface-hover: #17171a;
+    --color-border: #202024;
+    --color-border-strong: #2d2d33;
+
+    --color-text: #ededef;
+    --color-text-muted: #9a9aa3;
+    --color-text-subtle: #6b6b74;
+
+    --color-primary: #ededef;
+    --color-primary-hover: #ffffff;
+    --color-on-primary: #0a0a0b;
+    --color-accent: #6d8dff;
+    --color-accent-soft: rgba(109, 141, 255, 0.14);
+
+    --color-positive: #5fbf94;
+    --color-positive-soft: rgba(95, 191, 148, 0.14);
+    --color-negative: #ee7b72;
+    --color-negative-soft: rgba(238, 123, 114, 0.14);
+    --color-warning: #dfae5a;
+    --color-warning-soft: rgba(223, 174, 90, 0.14);
+
+    --color-focus-ring: rgba(237, 237, 239, 0.18);
+    --color-overlay: rgba(0, 0, 0, 0.62);
+    --color-tooltip-bg: #ededef;
+    --color-tooltip-text: #0a0a0b;
+
+    --shadow-sm: none;
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.65);
+
+    --chart-ink: #ededef;
+    --chart-accent: #6d8dff;
+    --chart-muted: #3a3a41;
+    --chart-1: #6d8dff;
+    --chart-2: #d4d4d0;
+    --chart-3: #6cb5ae;
+    --chart-4: #e0b661;
+    --chart-5: #de8b73;
+    --chart-6: #a3bd92;
+    --chart-7: #a692c4;
+    --chart-8: #8ca2cc;
+    --chart-9: #dda1b0;
+    --chart-10: #8b867e;
+    --chart-neutral: #4a4a52;
+    --chart-grid: rgba(237, 237, 239, 0.07);
+    --chart-label: #8b8b94;
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Expense Tracker Console</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23141413'/%3E%3Cpath d='M16 7l7 18h-3l-1.6-4.4h-4.8L12 25H9z' fill='white'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">E</div>
+        <div>
+          <div class="brand-name">Expense Tracker</div>
+          <div class="brand-sub">Admin console</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Main">
+        <div class="nav-label">Workspace</div>
+        <a href="#/overview" data-route="overview"><span data-icon="grid"></span>Overview</a>
+        <a href="#/expenses" data-route="expenses"><span data-icon="receipt"></span>Expenses</a>
+        <a href="#/users" data-route="users"><span data-icon="users"></span>Users</a>
+        <a href="#/analytics" data-route="analytics"><span data-icon="chart"></span>Analytics</a>
+        <div class="nav-label">Share</div>
+        <a href="#/present" data-route="present"><span data-icon="present"></span>Present</a>
+        <a href="/docs" target="_blank" rel="noopener"><span data-icon="book"></span>API reference</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-chip"><span class="dot" id="api-dot"></span><span id="api-status">Checking API...</span></div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="btn ghost icon menu-btn" id="menu-btn" aria-label="Open menu"></button>
+        <div>
+          <h1 class="topbar-title" id="page-title">Overview</h1>
+          <div class="topbar-sub" id="page-sub"></div>
+        </div>
+        <div class="topbar-spacer"></div>
+        <button class="search-trigger" id="search-btn" aria-label="Search (Ctrl K)"><span id="search-icon"></span><span class="label-text">Search</span><span class="kbd" id="search-kbd">Ctrl K</span></button>
+        <div class="topbar-controls" id="topbar-controls"></div>
+        <button class="btn icon" id="theme-btn" aria-label="Toggle theme"></button>
+      </header>
+      <main class="content" id="view" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <div id="overlay-root"></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div id="tooltip" role="tooltip"></div>
+
+  <script src="vendor/chart.umd.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
